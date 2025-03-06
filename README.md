@@ -21,17 +21,17 @@
 git clone https://github.com/jasonhckim/hyfve_ai_agent.git
 cd hyfve_ai_agent
 
-2️⃣ Install Dependencies
+### 2️⃣ Install Dependencies
 Make sure you have Python installed, then run:
 pip install -r requirements.txt
 
-3️⃣ Set Up Configurations
+### 3️⃣ Set Up Configurations
 Create a .env file or update config.yaml with the necessary API keys and credentials.
 Ensure all dependencies are installed.
-4️⃣ Run the Application
+### 4️⃣ Run the Application
 python main.py
 
-📂 Project Structure
+### 📂 Project Structure
 hyfve_ai_agent/
 │── src/                   # Source code directory
 │   ├── ai_module.py       # AI processing logic
