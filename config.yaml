@@ -1,0 +1,10 @@
+openai_api_key: "place-holder"
+google_credentials: "credentials.json"
+
+drive_folder_ids:
+  pdf: "1YrYWjpWUmGN-ISJK0TrO66SirBsLeMcH"
+  doc: "1Ja_3axmjpBO0pTImZiGNFF4qEtgPt50z"
+  csv: "1YrYWjpWUmGN-ISJK0TrO66SirBsLeMcH"
+
+regex_patterns:
+  style_number: "\\b(DZ\\d{2}[A-Z]\\d{3,5}(-SET|-D)?|HF\\d{2}[A-Z]\\d{3,5}(-SET|-D)?)\\b"

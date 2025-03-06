@@ -1,0 +1,9 @@
+# Ignore credentials
+credentials.json
+
+# Ignore temporary files
+*.pdf
+*.csv
+*.json
+
+export GOOGLE_APPLICATION_CREDENTIALS="your_credentials_json_as_env"
