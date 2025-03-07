@@ -19,6 +19,11 @@ jobs:
 
       - name: Install Dependencies
         run: pip install -r requirements.txt  # Modify if needed
-
+      
+      - name: Create credentials.json
+        run: echo "${{ secrets.GOOGLE_CREDENTIALS }}" > credentials.json
+      
       - name: Run the Script
         run: python main.py  # Replace with your main script file
+
+
