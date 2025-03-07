@@ -42,7 +42,7 @@ hyfve_ai_agent/
 │── README.md              # Project documentation
 │── requirements.txt       # Dependencies
 │── main.py                # Entry point for execution
-'''
+```
 
 ## 🛠 Technologies Used
 Python 🐍
