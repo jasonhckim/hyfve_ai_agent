@@ -31,7 +31,8 @@ Ensure all dependencies are installed.
 ## 4️⃣ Run the Application
 python main.py
 
-### 📂 Project Structure
+## 📂 Project Structure
+```plaintext
 hyfve_ai_agent/
 │── src/                   # Source code directory
 │   ├── ai_module.py       # AI processing logic
@@ -41,6 +42,7 @@ hyfve_ai_agent/
 │── README.md              # Project documentation
 │── requirements.txt       # Dependencies
 │── main.py                # Entry point for execution
+
 
 ## 🛠 Technologies Used
 Python 🐍
