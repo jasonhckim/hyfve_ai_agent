@@ -31,7 +31,7 @@ Ensure all dependencies are installed.
 ## 4️⃣ Run the Application
 python main.py
 
-## 📂 Project Structure
+### 📂 Project Structure
 hyfve_ai_agent/
 │── src/                   # Source code directory
 │   ├── ai_module.py       # AI processing logic
@@ -42,16 +42,18 @@ hyfve_ai_agent/
 │── requirements.txt       # Dependencies
 │── main.py                # Entry point for execution
 
-🛠 Technologies Used
+## 🛠 Technologies Used
 Python 🐍
 OpenAI API 🤖
 Pandas & NumPy 📊
 Flask (if applicable) 🌐
 Git & GitHub 🛠
-👥 Contributors
+
+##👥 Contributors
 Jason Kim (GitHub Profile)
-📜 License
+
+##📜 License
 This project is licensed under the MIT License – see the LICENSE file for details.
 
-📬 Contact
+##📬 Contact
 For questions, feel free to reach out via GitHub Issues or email.
