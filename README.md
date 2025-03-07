@@ -17,7 +17,7 @@
 ## 🚀 Installation
 
 ## 1️⃣ Clone the Repository
-```sh
+
 git clone https://github.com/jasonhckim/hyfve_ai_agent.git
 cd hyfve_ai_agent
 
