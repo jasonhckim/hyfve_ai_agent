@@ -32,6 +32,7 @@ Ensure all dependencies are installed.
 python main.py
 
 ### 📂 Project Structure
+--sh
 hyfve_ai_agent/
 │── src/                   # Source code directory
 │   ├── ai_module.py       # AI processing logic
