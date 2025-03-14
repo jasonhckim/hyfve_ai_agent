@@ -6,6 +6,11 @@ import yaml
 import gspread
 from google.oauth2.service_account import Credentials
 import pkg_resources
+version = pkg_resources.get_distribution("google-api-python-client").version
+print(f"google-api-python-client version: {version}")
+
+# Ensure you import from submodules correctly
+from googleapiclient.discovery import build  # ✅ This is the correct way
 print("googleapiclient module imported successfully!")
 
 # ✅ Load Configuration from YAML
