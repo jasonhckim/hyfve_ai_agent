@@ -103,34 +103,51 @@ def process_pdf():
 
     pdf_file = google_drive.list_files_in_drive(PDF_FOLDER_ID, "application/pdf")
 
-    if pdf_file:
-        pdf_filename = pdf_file["name"]  # Get the actual name of the PDF
-        pdf_path = google_drive.download_file_from_drive(pdf_file["id"], pdf_filename)
-        extracted_data = google_drive.extract_text_and_images_from_pdf(pdf_path)
+    if not pdf_file:
+        print("❌ ERROR: No PDF files found in Google Drive.")
+        return
 
-        # ✅ Fetch Keywords from Drive
-        keywords = get_keywords_from_drive()
+    pdf_filename = pdf_file["name"]  # Get the actual name of the PDF
+    pdf_path = google_drive.download_file_from_drive(pdf_file["id"], pdf_filename)
 
-        # ✅ Generate descriptions
-        processed_data = [
-            ai_description.generate_description(entry["style_number"], entry["images"], keywords) 
-            for entry in extracted_data
-        ]
+    # ✅ Debug: Ensure file was downloaded
+    if not os.path.exists(pdf_path):
+        print(f"❌ ERROR: PDF file '{pdf_filename}' was not downloaded successfully.")
+        return
 
-        # ✅ Convert to DataFrame
-        df = pd.DataFrame(processed_data)
+    extracted_data = google_drive.extract_text_and_images_from_pdf(pdf_path)
 
-        # ✅ Ensure proper column order
-        expected_columns = [
-            "Style Number", "Product Title", "Product Description", "Tags", 
-            "Product Category", "Product Type", "Option2 Value", "Keywords"
-        ]
-        df = df[expected_columns]
+    # ✅ Debug: Check extracted data
+    if not extracted_data:
+        print("❌ ERROR: No data extracted from the PDF.")
+        return
 
-        # ✅ Upload the data to a Google Sheet (same name as the PDF)
-        upload_to_google_sheets(df, pdf_filename, PDF_FOLDER_ID)
+    # ✅ Fetch Keywords from Drive
+    keywords = get_keywords_from_drive()
 
-        print(f"✅ Process completed. PDF and Google Sheet are in the same folder: {PDF_FOLDER_ID}")
+    # ✅ Generate descriptions
+    processed_data = [
+        ai_description.generate_description(entry["style_number"], entry["images"], keywords) 
+        for entry in extracted_data
+    ]
+
+    # ✅ Convert to DataFrame
+    df = pd.DataFrame(processed_data)
+
+    # ✅ Debug: Check available columns before filtering
+    print("🛠️ DEBUG: Available columns in DataFrame:", df.columns.tolist())
+
+    # ✅ Safely reindex to expected columns
+    expected_columns = [
+        "Style Number", "Product Title", "Product Description", "Tags", 
+        "Product Category", "Product Type", "Option2 Value", "Keywords"
+    ]
+    df = df.reindex(columns=expected_columns, fill_value="N/A")  # Prevents KeyError
+
+    # ✅ Upload the data to Google Sheets
+    upload_to_google_sheets(df, pdf_filename, PDF_FOLDER_ID)
+
+    print(f"✅ Process completed. PDF and Google Sheet are in the same folder: {PDF_FOLDER_ID}")
 
 
 if __name__ == "__main__":
