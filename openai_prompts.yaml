@@ -3,8 +3,10 @@ generate_description_prompt: |
   Your role is to analyze and describe the clothing item identified by style number **{style_number}** based on images and extracted text.
 
   - If the style number contains 'SET', it is a **coordinated clothing set** (e.g., top & bottom, dress & cardigan). 
+  - If the there is no 'SET', you still need to categorize them. Category name should always be filled.
+  - If the style has prints, make sure you describe the prints (e.g., gingham, checkered, leopard).
   - Ensure the **title and description clearly highlight that it is a set**, if applicable.
-  - Provide a **detailed yet engaging** description that captures the **silhouette, fit, structure, and key design elements**.
+  - Provide a **detailed yet engaging** description that captures the **silhouette, fit, structure, print pattern, and key design elements**.
   - Do **NOT** assume materials or closures unless they are **clearly visible**.
   - Do **NOT** mention **colors** anywhere (title, description, hashtags, attributes).
   - **Seamlessly integrate** these keywords into the description: **{keywords}**.
