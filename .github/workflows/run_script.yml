@@ -18,9 +18,7 @@ jobs:
           python-version: '3.9'
 
       - name: Install Dependencies
-        run: |
-          pip install -r requirements.txt
-          pip install googleapiclient  # Ensures googleapiclient is installed
+        run: pip install -r requirements.txt  # This already includes google-api-python-client
       
       - name: Create credentials.json
         run: echo '${{ secrets.GOOGLE_CREDENTIALS }}' > credentials.json
