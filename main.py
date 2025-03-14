@@ -17,7 +17,6 @@ import googleapiclient
 with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
 
-
 # ✅ Retrieve Folder IDs from Config
 PDF_FOLDER_ID = config["drive_folder_ids"]["pdf"]
 DOC_FOLDER_ID = config["drive_folder_ids"]["doc"]
