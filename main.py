@@ -5,6 +5,11 @@ import pandas as pd
 import yaml
 import gspread
 from google.oauth2.service_account import Credentials
+import pkg_resources
+
+version = pkg_resources.get_distribution("google-api-python-client").version
+print(version)
+
 import googleapiclient
 print(googleapiclient.__version__)
 
