@@ -9,8 +9,11 @@ jobs:
   run-agent:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout Repository (Force Fresh)
         uses: actions/checkout@v3
+        with:
+          ref: main
+          fetch-depth: 0  # Ensures the latest code is pulled
 
       - name: Set Up Python
         uses: actions/setup-python@v4
@@ -18,10 +21,10 @@ jobs:
           python-version: '3.9'
 
       - name: Install Dependencies
-        run: pip install -r requirements.txt  # This already includes google-api-python-client
+        run: pip install -r requirements.txt  # Installs all required packages
       
       - name: Create credentials.json
         run: echo '${{ secrets.GOOGLE_CREDENTIALS }}' > credentials.json
       
       - name: Run the Script
-        run: python main.py  # Replace with your main script file
+        run: python main.py  # Executes your main script
