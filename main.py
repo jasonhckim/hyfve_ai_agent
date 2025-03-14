@@ -98,6 +98,7 @@ def upload_to_google_sheets(df, pdf_filename, pdf_folder_id):
 
 
 
+
 import os
 
 def process_pdf():
