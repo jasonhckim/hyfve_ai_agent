@@ -5,6 +5,8 @@ import pandas as pd
 import yaml
 import gspread
 from google.oauth2.service_account import Credentials
+import googleapiclient
+print(googleapiclient.__version__)
 
 
 # ✅ Load Configuration from YAML
