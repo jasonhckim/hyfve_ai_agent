@@ -26,4 +26,10 @@ jobs:
       - name: Run the Script
         run: python main.py  # Replace with your main script file
 
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install googleapiclient  # Ensures it's installed on GitHub Actions
+      
+
 
