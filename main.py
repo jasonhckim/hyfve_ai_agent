@@ -98,6 +98,8 @@ def upload_to_google_sheets(df, pdf_filename, pdf_folder_id):
 
 
 
+import os
+
 def process_pdf():
     """Extracts data from the latest PDF, generates descriptions, and uploads both files to Google Sheets."""
 
@@ -105,15 +107,22 @@ def process_pdf():
 
     if not pdf_file:
         print("❌ ERROR: No PDF files found in Google Drive.")
-        return
+        return  # Stop the process if no PDF is found
 
     pdf_filename = pdf_file["name"]  # Get the actual name of the PDF
     pdf_path = google_drive.download_file_from_drive(pdf_file["id"], pdf_filename)
 
-    # ✅ Debug: Ensure file was downloaded
+    # ✅ Debugging: Check if the function returned a valid path
+    if not pdf_path:
+        print(f"❌ ERROR: google_drive.download_file_from_drive() returned None for '{pdf_filename}'")
+        return  # Stop execution if the file is not downloaded
+
+    # ✅ Debugging: Check if the file exists
     if not os.path.exists(pdf_path):
         print(f"❌ ERROR: PDF file '{pdf_filename}' was not downloaded successfully.")
-        return
+        return  # Stop execution if the file is missing
+
+    print(f"✅ Successfully downloaded '{pdf_filename}' to: {pdf_path}")
 
     extracted_data = google_drive.extract_text_and_images_from_pdf(pdf_path)
 
@@ -148,6 +157,7 @@ def process_pdf():
     upload_to_google_sheets(df, pdf_filename, PDF_FOLDER_ID)
 
     print(f"✅ Process completed. PDF and Google Sheet are in the same folder: {PDF_FOLDER_ID}")
+
 
 
 if __name__ == "__main__":
