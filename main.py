@@ -16,6 +16,10 @@ PDF_FOLDER_ID = config["drive_folder_ids"]["pdf"]
 DOC_FOLDER_ID = config["drive_folder_ids"]["doc"]
 CSV_FOLDER_ID = config["drive_folder_ids"]["csv"]
 
+import os
+if not os.path.exists("credentials.json"):
+    print("❌ ERROR: credentials.json file is missing in GitHub Actions!")
+
 # ✅ Google Sheets Credentials
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
 SERVICE_ACCOUNT_FILE = "credentials.json"  # Ensure you have this in your project folder
