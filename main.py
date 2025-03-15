@@ -97,13 +97,27 @@ import os
 def process_pdf():
     """Extracts data from the latest PDF, generates descriptions, and uploads both files to Google Sheets."""
 
-    pdf_file = google_drive.list_files_in_drive(PDF_FOLDER_ID, "application/pdf")
+    # ✅ List all available PDFs before trying to download
+    print("🛠️ DEBUG: Listing all PDFs in Google Drive folder...")
+    pdf_files = google_drive.list_files_in_drive(PDF_FOLDER_ID, "application/pdf")
+
+    if not pdf_files:
+        print(f"❌ ERROR: No PDF files found in Google Drive folder '{PDF_FOLDER_ID}'.")
+        return  # Stop if no files found
+
+    # ✅ Print available files for debugging
+    print("🛠️ DEBUG: Available PDFs in Drive:")
+    for f in pdf_files:
+        print(f"     📄 Name: {f['name']} | 🆔 ID: {f['id']}")
+
+    # ✅ Try to find 'test.pdf' (or any latest PDF)
+    pdf_file = next((f for f in pdf_files if f["name"] == "test.pdf"), None)
 
     if not pdf_file:
-        print("❌ ERROR: No PDF files found in Google Drive.")
-        return  # Stop the process if no PDF is found
+        print("❌ ERROR: 'test.pdf' not found in Google Drive. Available PDFs are listed above.")
+        return
 
-    pdf_filename = pdf_file["name"]  # Get the actual name of the PDF
+    pdf_filename = pdf_file["name"]
     pdf_path = google_drive.download_file_from_drive(pdf_file["id"], pdf_filename)
 
     # ✅ Debugging: Check if the function returned a valid path
@@ -118,6 +132,7 @@ def process_pdf():
 
     print(f"✅ Successfully downloaded '{pdf_filename}' to: {pdf_path}")
 
+    # ✅ Extract Data from PDF
     extracted_data = google_drive.extract_text_and_images_from_pdf(pdf_path)
 
     # ✅ Debug: Check extracted data
@@ -148,10 +163,10 @@ def process_pdf():
     df = df.reindex(columns=expected_columns, fill_value="N/A")  # Prevents KeyError
 
     # ✅ Upload the data to Google Sheets
+    print("🛠️ DEBUG: Uploading data to Google Sheets...")
     upload_to_google_sheets(df, pdf_filename, PDF_FOLDER_ID)
 
     print(f"✅ Process completed. PDF and Google Sheet are in the same folder: {PDF_FOLDER_ID}")
-
 
 
 if __name__ == "__main__":
