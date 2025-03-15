@@ -32,7 +32,11 @@ SERVICE_ACCOUNT_FILE = "credentials.json"  # Ensure you have this in your projec
 
 def get_keywords_from_drive():
     """Fetches keywords from the latest document in Google Drive."""
-    doc_file = google_drive.list_files_in_drive(DOC_FOLDER_ID, "text/plain")
+    if doc_file and isinstance(doc_file, list) and len(doc_file) > 0:
+    doc_file = doc_file[0]  # Take the first file if a list is returned
+    doc_path = google_drive.download_file_from_drive(doc_file["id"], "keywords.txt")
+    return utils.extract_keywords_from_doc(doc_path) if doc_path else []
+
     
     if doc_file:
         doc_path = google_drive.download_file_from_drive(doc_file["id"], "keywords.txt")
@@ -72,16 +76,18 @@ def upload_to_google_sheets(df, pdf_filename, pdf_folder_id):
     try:
         drive_service.files().update(
             fileId=file_id,
-            addParents=pdf_folder_id,
-            removeParents="root",
+            body={"parents": [pdf_folder_id]},
             fields="id, parents"
         ).execute()
-        print(f"✅ Google Sheet '{sheet_name}' moved to folder: {pdf_folder_id}")
     except Exception as e:
-        print(f"❌ ERROR: Failed to move Google Sheet '{sheet_name}' to folder: {pdf_folder_id}. Debug: {e}")
+        print(f"❌ ERROR: Failed to move Google Sheet to folder {pdf_folder_id}. Details: {e}")
 
-    # ✅ Select the first worksheet (or create it)
-    worksheet = sheet.get_worksheet(0) or sheet.add_worksheet(title="Sheet1", rows="1000", cols="10")
+
+    # This always refers to the first sheet
+    worksheet = sheet.sheet1  # This always refers to the first sheet
+    if not worksheet:
+        worksheet = sheet.add_worksheet(title="Sheet1", rows="1000", cols="10")
+
 
     # ✅ Convert DataFrame to list of lists for Google Sheets
     data = [df.columns.tolist()] + df.values.tolist()
@@ -105,10 +111,14 @@ def process_pdf():
         print(f"❌ ERROR: No PDF files found in Google Drive folder '{PDF_FOLDER_ID}'.")
         return  # Stop if no files found
 
-    # ✅ Print available files for debugging
+    # ✅ Debugging: Ensure 'f' is a dictionary before accessing keys
     print("🛠️ DEBUG: Available PDFs in Drive:")
     for f in pdf_files:
-        print(f"     📄 Name: {f['name']} | 🆔 ID: {f['id']}")
+        if isinstance(f, dict):  # Ensure it's a dictionary before accessing keys
+            print(f"     📄 Name: {f['name']} | 🆔 ID: {f['id']}")
+        else:
+            print(f"❌ ERROR: Unexpected data format for file: {f} (Type: {type(f)})")
+
 
     # ✅ Try to find 'test.pdf' (or any latest PDF)
     pdf_file = next((f for f in pdf_files if f["name"] == "test.pdf"), None)
