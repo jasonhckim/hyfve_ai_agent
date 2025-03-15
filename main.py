@@ -6,6 +6,7 @@ import yaml
 import gspread
 from google.oauth2.service_account import Credentials
 import pkg_resources
+
 version = pkg_resources.get_distribution("google-api-python-client").version
 print(f"google-api-python-client version: {version}")
 
@@ -30,19 +31,36 @@ if not os.path.exists("credentials.json"):
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
 SERVICE_ACCOUNT_FILE = "credentials.json"  # Ensure you have this in your project folder
 
-def get_keywords_from_drive():
-    """Fetches keywords from the latest document in Google Drive."""
-    if doc_file and isinstance(doc_file, list) and len(doc_file) > 0:
-    doc_file = doc_file[0]  # Take the first file if a list is returned
-    doc_path = google_drive.download_file_from_drive(doc_file["id"], "keywords.txt")
-    return utils.extract_keywords_from_doc(doc_path) if doc_path else []
 
+def get_keywords_from_drive():
+    """
+    Fetches keywords from the latest document in Google Drive.
+
+    NOTE: We must define or retrieve `doc_file` somewhere. 
+    For example, you might do:
+
+        doc_file = google_drive.list_files_in_drive(DOC_FOLDER_ID, "application/vnd.google-apps.document")
     
-    if doc_file:
+    so that `doc_file` is not None.
+    """
+    # Example: retrieve doc files from Drive (adjust to your needs):
+    doc_file = google_drive.list_files_in_drive(DOC_FOLDER_ID, "application/vnd.google-apps.document")
+    if not doc_file:
+        return []
+
+    # If we received a list of docs, handle the first one
+    if isinstance(doc_file, list) and len(doc_file) > 0:
+        doc_file = doc_file[0]
         doc_path = google_drive.download_file_from_drive(doc_file["id"], "keywords.txt")
         return utils.extract_keywords_from_doc(doc_path) if doc_path else []
-    
+
+    # If it's a single doc object, handle that
+    if isinstance(doc_file, dict):
+        doc_path = google_drive.download_file_from_drive(doc_file["id"], "keywords.txt")
+        return utils.extract_keywords_from_doc(doc_path) if doc_path else []
+
     return []
+
 
 def upload_to_google_sheets(df, pdf_filename, pdf_folder_id):
     """Uploads the DataFrame to a Google Sheet named after the PDF file and ensures it is moved to the correct Google Drive folder."""
@@ -66,8 +84,6 @@ def upload_to_google_sheets(df, pdf_filename, pdf_folder_id):
         print(f"✅ Created new Google Sheet: {sheet_name}")
 
     # ✅ Ensure the Google Sheet is moved to the correct Google Drive folder
-    from googleapiclient.discovery import build
-
     drive_service = build("drive", "v3", credentials=creds)  # Ensure proper API usage
     file_id = sheet.id  # Get the newly created sheet's ID
 
@@ -82,12 +98,10 @@ def upload_to_google_sheets(df, pdf_filename, pdf_folder_id):
     except Exception as e:
         print(f"❌ ERROR: Failed to move Google Sheet to folder {pdf_folder_id}. Details: {e}")
 
-
     # This always refers to the first sheet
-    worksheet = sheet.sheet1  # This always refers to the first sheet
+    worksheet = sheet.sheet1
     if not worksheet:
         worksheet = sheet.add_worksheet(title="Sheet1", rows="1000", cols="10")
-
 
     # ✅ Convert DataFrame to list of lists for Google Sheets
     data = [df.columns.tolist()] + df.values.tolist()
@@ -97,8 +111,6 @@ def upload_to_google_sheets(df, pdf_filename, pdf_folder_id):
     worksheet.update(values=data, range_name="A1")
     print(f"✅ Successfully uploaded data to Google Sheet '{sheet_name}'")
 
-
-import os
 
 def process_pdf():
     """Extracts data from the latest PDF, generates descriptions, and uploads both files to Google Sheets."""
@@ -118,7 +130,6 @@ def process_pdf():
             print(f"     📄 Name: {f['name']} | 🆔 ID: {f['id']}")
         else:
             print(f"❌ ERROR: Unexpected data format for file: {f} (Type: {type(f)})")
-
 
     # ✅ Try to find 'test.pdf' (or any latest PDF)
     pdf_file = next((f for f in pdf_files if f["name"] == "test.pdf"), None)
